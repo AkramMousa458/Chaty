@@ -16,7 +16,7 @@ class MessageBubbleSend extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           margin: const EdgeInsets.only(top: 12, left: 12, right: 12),
           decoration: BoxDecoration(
-              color: kPrimaryColor,
+              color: Colors.green[800],
               borderRadius: const BorderRadius.only(
                 topRight: Radius.circular(20),
                 topLeft: Radius.circular(20),
@@ -55,9 +55,9 @@ class MessageBubbleReceive extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 320),
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           margin: const EdgeInsets.only(top: 12, left: 12, right: 12),
-          decoration: const BoxDecoration(
-              color: Colors.green,
-              borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+              color: kPrimaryColor,
+              borderRadius: const BorderRadius.only(
                 topRight: Radius.circular(20),
                 topLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20),

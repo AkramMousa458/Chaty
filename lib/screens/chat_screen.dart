@@ -1,7 +1,9 @@
 import 'package:akram/constants.dart';
 import 'package:akram/models/message.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../models/screen_args.dart';
 import '../widgets/message_bubble.dart';
 
 // ignore: depend_on_referenced_packages
@@ -19,12 +21,14 @@ class ChatScreen extends StatelessWidget {
 
   final _controller = ScrollController();
 
+  late List<Message> chat;
+
   CollectionReference messages =
       FirebaseFirestore.instance.collection(kMessagesCollection);
 
   @override
   Widget build(BuildContext context) {
-    String email = ModalRoute.of(context)!.settings.arguments as String;
+    ScreenArgs args = ModalRoute.of(context)!.settings.arguments as ScreenArgs;
 
     return StreamBuilder<QuerySnapshot>(
         stream: messages.orderBy(kCreatedAt, descending: true).snapshots(),
@@ -36,6 +40,8 @@ class ChatScreen extends StatelessWidget {
                 Message.fromJson(snapshot.data!.docs[i]),
               );
             }
+            chat = getChat(
+                messagesList, args.userEmail, args.friendEmail, context);
             return Scaffold(
                 appBar: AppBar(
                   automaticallyImplyLeading: false,
@@ -43,19 +49,22 @@ class ChatScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: Transform.scale(
-                            scaleX: -1,
-                            child: const Icon(
-                              Icons.logout,
-                              size: 22,
-                            ),
-                          )),
+                        onTap: () {
+                          Navigator.pop(context);
+                          if (kDebugMode) {
+                            print('test');
+                          }
+                        },
+                        child: const Icon(
+                          Icons.arrow_back_ios_rounded,
+                          size: 22,
+                        ),
+                      ),
                       Row(
                         children: [
                           Image.asset(kLogo, height: 38),
                           const SizedBox(width: 6),
-                          const Text('Chaty')
+                          Text(args.friendName)
                         ],
                       ),
                       Container(width: 30)
@@ -69,13 +78,12 @@ class ChatScreen extends StatelessWidget {
                       child: ListView.builder(
                         reverse: true,
                         controller: _controller,
-                        primary: false,
-                        itemCount: messagesList.length,
+                        itemCount: chat.length,
                         itemBuilder: (context, index) {
-                          return messagesList[index].id == email
-                              ? MessageBubbleSend(message: messagesList[index])
-                              : MessageBubbleReceive(
-                                  message: messagesList[index]);
+                          return chat[index].id == args.userEmail &&
+                                  chat[index].friendId == args.friendEmail
+                              ? MessageBubbleSend(message: chat[index])
+                              : MessageBubbleReceive(message: chat[index]);
                         },
                       ),
                     ),
@@ -97,7 +105,8 @@ class ChatScreen extends StatelessWidget {
                                           ? "${DateTime.now().hour}:0${DateTime.now().minute}"
                                           : "${DateTime.now().hour}:${DateTime.now().minute}",
                                       kCreatedAt: DateTime.now(),
-                                      kId: email,
+                                      kId: args.userEmail,
+                                      kFriendId: args.friendEmail
                                     });
                                   }
                                   messageController.clear();
@@ -130,7 +139,8 @@ class ChatScreen extends StatelessWidget {
                                         ? "${DateTime.now().hour}:0${DateTime.now().minute}"
                                         : "${DateTime.now().hour}:${DateTime.now().minute}",
                                     kCreatedAt: DateTime.now(),
-                                    kId: email
+                                    kId: args.userEmail,
+                                    kFriendId: args.friendEmail
                                   });
                                 }
                                 userMessage = null;
@@ -223,5 +233,26 @@ class ChatScreen extends StatelessWidget {
                 ));
           }
         });
+  }
+
+  dynamic getMessage(
+      List<Message> list, int i, String sender, String receiver) {
+    if (list[i].id == sender && list[i].friendId == receiver) {
+      return MessageBubbleSend(message: list[i]);
+    } else if (list[i].id == receiver && list[i].friendId == sender) {
+      return MessageBubbleReceive(message: list[i]);
+    }
+  }
+
+  List<Message> getChat(List<Message> list, String sender, String receiver,
+      BuildContext context) {
+    List<Message> chat = [];
+    for (int i = 0; i < list.length; i++) {
+      if ((list[i].id == sender && list[i].friendId == receiver) ||
+          list[i].friendId == sender && list[i].id == receiver) {
+        chat.add(list[i]);
+      }
+    }
+    return chat;
   }
 }

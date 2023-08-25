@@ -10,5 +10,8 @@ String kMessage = 'message';
 String kTime = 'time';
 String kCreatedAt = 'createdAt';
 String kId = 'id';
+String kFriendId = 'friendId';
 
 String kUsersCollection = 'users';
+String kEmail = 'email';
+String kName = 'name';

@@ -1,10 +1,9 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, use_build_context_synchronously
 
 import 'package:akram/models/show_snack_bar.dart';
+import 'package:akram/screens/people_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../screens/chat_screen.dart';
 
 Future<void> loginUser({
   required BuildContext context,
@@ -14,7 +13,7 @@ Future<void> loginUser({
   try {
     var auth = FirebaseAuth.instance;
     await auth.signInWithEmailAndPassword(email: email, password: password);
-    Navigator.pushNamed(context, ChatScreen.id, arguments: email);
+    Navigator.pushNamed(context, PeopleScreen.id, arguments: email);
   } on FirebaseAuthException catch (ex) {
     if (ex.code == 'user-not-found') {
       showSnackBar(
@@ -30,6 +29,7 @@ Future<void> loginUser({
           backColor: Colors.red);
     }
   } catch (ex) {
+    // ignore: avoid_print
     print(ex);
   }
 }

@@ -1,5 +1,4 @@
 import 'package:akram/models/login_user.dart';
-import 'package:akram/screens/chat_screen.dart';
 import 'package:akram/screens/register_screen.dart';
 import 'package:akram/widgets/button_widget.dart';
 import 'package:flutter/material.dart';

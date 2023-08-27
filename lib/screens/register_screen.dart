@@ -113,20 +113,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               await registerUser(
                                   context: context,
                                   name: name.toString(),
-                                  email: email.toString(),
-                                  password: password.toString(),
-                                  confirmPassword: confirmPassword.toString());
+                                  email: email.toString().trim(),
+                                  password: password.toString().trim(),
+                                  confirmPassword:
+                                      confirmPassword.toString().trim());
                               setState(() {
                                 isLoading = false;
                               });
                             } on FirebaseAuthException catch (ex) {
                               if (ex.code == 'weak-password') {
+                                setState(() {
+                                  isLoading = false;
+                                });
                                 showSnackBar(
                                     context: context,
                                     text: 'The password is too weak.',
                                     icon: Icons.no_encryption_gmailerrorred,
                                     backColor: Colors.red);
                               } else if (ex.code == 'email-already-in-use') {
+                                setState(() {
+                                  isLoading = false;
+                                });
                                 showSnackBar(
                                     context: context,
                                     text:
@@ -136,6 +143,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     textSize: 15);
                               }
                             } catch (ex) {
+                              setState(() {
+                                isLoading = false;
+                              });
                               showSnackBar(
                                 context: context,
                                 text: 'Error, Please try again.',

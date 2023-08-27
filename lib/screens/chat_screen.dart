@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/screen_args.dart';
+import '../models/show_snack_bar.dart';
 import '../widgets/message_bubble.dart';
 
 // ignore: depend_on_referenced_packages
@@ -31,7 +32,7 @@ class ChatScreen extends StatelessWidget {
     ScreenArgs args = ModalRoute.of(context)!.settings.arguments as ScreenArgs;
 
     return StreamBuilder<QuerySnapshot>(
-        stream: messages.orderBy(kCreatedAt, descending: true).snapshots(),
+        stream: messages.orderBy('time', descending: true).snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Message> messagesList = [];
@@ -51,9 +52,6 @@ class ChatScreen extends StatelessWidget {
                       GestureDetector(
                         onTap: () {
                           Navigator.pop(context);
-                          if (kDebugMode) {
-                            print('test');
-                          }
                         },
                         child: const Icon(
                           Icons.arrow_back_ios_rounded,
@@ -76,13 +74,23 @@ class ChatScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
                         reverse: true,
                         controller: _controller,
                         itemCount: chat.length,
                         itemBuilder: (context, index) {
                           return chat[index].id == args.userEmail &&
                                   chat[index].friendId == args.friendEmail
-                              ? MessageBubbleSend(message: chat[index])
+                              ? GestureDetector(
+                                  onLongPress: () {
+                                    showSnackBar(
+                                        context: context,
+                                        text: chat[index].text,
+                                        icon: Icons.message,
+                                        backColor: Colors.grey);
+                                  },
+                                  child:
+                                      MessageBubbleSend(message: chat[index]))
                               : MessageBubbleReceive(message: chat[index]);
                         },
                       ),
@@ -101,9 +109,12 @@ class ChatScreen extends StatelessWidget {
                                   if (data != '') {
                                     messages.add({
                                       kMessage: data,
-                                      kTime: (DateTime.now().minute) < 10
-                                          ? "${DateTime.now().hour}:0${DateTime.now().minute}"
-                                          : "${DateTime.now().hour}:${DateTime.now().minute}",
+                                      kTime: getTime(
+                                        DateTime.now().hour,
+                                        DateTime.now().minute,
+                                        DateTime.now().second,
+                                        DateTime.now().millisecond,
+                                      ),
                                       kCreatedAt: DateTime.now(),
                                       kId: args.userEmail,
                                       kFriendId: args.friendEmail
@@ -111,7 +122,7 @@ class ChatScreen extends StatelessWidget {
                                   }
                                   messageController.clear();
                                   userMessage = null;
-                                  _controller.animateTo(0,
+                                  _controller.animateTo(0 - 80,
                                       duration:
                                           const Duration(milliseconds: 500),
                                       curve: Curves.fastOutSlowIn);
@@ -135,9 +146,11 @@ class ChatScreen extends StatelessWidget {
                                 if (userMessage != null) {
                                   messages.add({
                                     kMessage: userMessage,
-                                    kTime: (DateTime.now().minute) < 10
-                                        ? "${DateTime.now().hour}:0${DateTime.now().minute}"
-                                        : "${DateTime.now().hour}:${DateTime.now().minute}",
+                                    kTime: getTime(
+                                        DateTime.now().hour,
+                                        DateTime.now().minute,
+                                        DateTime.now().second,
+                                        DateTime.now().millisecond),
                                     kCreatedAt: DateTime.now(),
                                     kId: args.userEmail,
                                     kFriendId: args.friendEmail
@@ -145,7 +158,7 @@ class ChatScreen extends StatelessWidget {
                                 }
                                 userMessage = null;
                                 messageController.clear();
-                                _controller.animateTo(0,
+                                _controller.animateTo(0 - 40,
                                     duration: const Duration(milliseconds: 500),
                                     curve: Curves.easeIn);
                               },
@@ -235,15 +248,6 @@ class ChatScreen extends StatelessWidget {
         });
   }
 
-  dynamic getMessage(
-      List<Message> list, int i, String sender, String receiver) {
-    if (list[i].id == sender && list[i].friendId == receiver) {
-      return MessageBubbleSend(message: list[i]);
-    } else if (list[i].id == receiver && list[i].friendId == sender) {
-      return MessageBubbleReceive(message: list[i]);
-    }
-  }
-
   List<Message> getChat(List<Message> list, String sender, String receiver,
       BuildContext context) {
     List<Message> chat = [];
@@ -254,5 +258,21 @@ class ChatScreen extends StatelessWidget {
       }
     }
     return chat;
+  }
+
+  String getTime(var hour, var minute, var second, var millisecond) {
+    String getHour, getMinute, getSecond, getMilliSecond;
+
+    hour < 10 ? getHour = '0$hour' : getHour = '$hour';
+
+    minute < 10 ? getMinute = '0$minute' : getMinute = '$minute';
+
+    second < 10 ? getSecond = '0$second' : getSecond = '$second';
+
+    millisecond < 10
+        ? getMilliSecond = '0$millisecond'
+        : getMilliSecond = '$millisecond';
+
+    return '$getHour:$getMinute:$getSecond:$getMilliSecond';
   }
 }

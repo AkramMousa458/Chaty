@@ -91,8 +91,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             });
                             await loginUser(
                                 context: context,
-                                email: email!,
-                                password: password!);
+                                email: email!.trim(),
+                                password: password!.trim());
 
                             setState(() {
                               isLoading = false;

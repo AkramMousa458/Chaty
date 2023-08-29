@@ -4,6 +4,7 @@ import 'package:akram/constants.dart';
 import 'package:akram/models/screen_args.dart';
 import 'package:akram/models/user.dart';
 import 'package:akram/screens/chat_screen.dart';
+import 'package:akram/widgets/confirm_dialog_box.dart';
 import 'package:akram/widgets/setting_widget.dart';
 import 'package:akram/widgets/user_widget.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,17 @@ class PeopleScreen extends StatelessWidget {
                   FloatingActionButtonLocation.endFloat,
               floatingActionButton: GestureDetector(
                 onTap: () {
-                  Navigator.pop(context);
+                  confirmDialogBox(
+                      context: context,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      title: "Logout",
+                      body: 'Are you sure want logout?',
+                      no: 'Cancel',
+                      confirm: 'Logout');
+                  // Navigator.pop(context);
                 },
                 child: Container(
                   height: 50,
@@ -47,15 +58,54 @@ class PeopleScreen extends StatelessWidget {
                     color: kPrimaryColor,
                   ),
                   margin: const EdgeInsets.all(10),
-                  child: const Icon(
-                    Icons.arrow_back_ios_rounded,
-                    color: Colors.white,
-                    size: 30,
+                  child: Transform.scale(
+                    scaleX: -1,
+                    child: const Icon(
+                      Icons.logout,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                   ),
                 ),
               ),
               appBar: AppBar(
                 automaticallyImplyLeading: false,
+                actions: [
+                  PopupMenuButton(
+                      icon: const Padding(
+                        padding: EdgeInsets.only(right: 12),
+                        child: Icon(
+                          Icons.more_vert,
+                          color: Colors.black,
+                        ),
+                      ),
+                      iconSize: 35,
+                      onSelected: (value) {
+                        switch (value) {
+                          case MenuItem.search:
+                            print('Search screen');
+                            break;
+                          case MenuItem.setting:
+                            Navigator.pushNamed(context, SettingWidget.id,
+                                arguments: userEmail);
+                            break;
+                        }
+                      },
+                      itemBuilder: (context) => [
+                            const PopupMenuItem(
+                                value: MenuItem.search,
+                                child: ListTile(
+                                  title: Text('Search'),
+                                  leading: Icon(Icons.search_rounded),
+                                )),
+                            const PopupMenuItem(
+                                value: MenuItem.setting,
+                                child: ListTile(
+                                  title: Text('Setting'),
+                                  leading: Icon(Icons.settings_rounded),
+                                )),
+                          ])
+                ],
                 toolbarHeight: 120,
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -97,16 +147,6 @@ class PeopleScreen extends StatelessWidget {
                         )
                       ],
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, SettingWidget.id);
-                      },
-                      child: const Icon(
-                        Icons.more_vert,
-                        color: Colors.black,
-                        size: 30,
-                      ),
-                    )
                   ],
                 ),
                 elevation: 0,
@@ -170,4 +210,9 @@ class PeopleScreen extends StatelessWidget {
           }
         });
   }
+}
+
+enum MenuItem {
+  search,
+  setting,
 }

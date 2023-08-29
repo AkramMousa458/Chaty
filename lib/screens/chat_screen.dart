@@ -1,21 +1,28 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:akram/constants.dart';
 import 'package:akram/models/message.dart';
-import 'package:flutter/foundation.dart';
+import 'package:akram/widgets/confirm_dialog_box.dart';
 import 'package:flutter/material.dart';
 
 import '../models/screen_args.dart';
-import '../models/show_snack_bar.dart';
 import '../widgets/message_bubble.dart';
 
-// ignore: depend_on_referenced_packages
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 // ignore: must_be_immutable
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   ChatScreen({super.key});
 
   static String id = 'ChatScreen';
 
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
   TextEditingController messageController = TextEditingController();
 
   String? userMessage;
@@ -26,6 +33,8 @@ class ChatScreen extends StatelessWidget {
 
   CollectionReference messages =
       FirebaseFirestore.instance.collection(kMessagesCollection);
+
+  final soundPlayer = AudioPlayer();
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +64,7 @@ class ChatScreen extends StatelessWidget {
                         },
                         child: const Icon(
                           Icons.arrow_back_ios_rounded,
-                          size: 22,
+                          size: 30,
                         ),
                       ),
                       Row(
@@ -81,14 +90,70 @@ class ChatScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           return chat[index].id == args.userEmail &&
                                   chat[index].friendId == args.friendEmail
-                              ? GestureDetector(
-                                  onLongPress: () {
-                                    showSnackBar(
-                                        context: context,
-                                        text: chat[index].text,
-                                        icon: Icons.message,
-                                        backColor: Colors.grey);
-                                  },
+                              ? Slidable(
+                                  key: UniqueKey(),
+                                  endActionPane: ActionPane(
+                                    motion: const ScrollMotion(),
+                                    children: [
+                                      Container(
+                                        width: 30,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius:
+                                                BorderRadius.circular(100)),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            String itemId =
+                                                snapshot.data!.docs[index].id;
+                                            setState(() {});
+                                            confirmDialogBox(
+                                                context: context,
+                                                onTap: () async {
+                                                  await deleteMessage(itemId);
+                                                  Navigator.pop(context);
+                                                },
+                                                title: 'Delete Message',
+                                                body:
+                                                    'Do you want delete the message',
+                                                no: 'Cancel',
+                                                confirm: 'Delete');
+                                          },
+                                          child: const Icon(
+                                            Icons.delete,
+                                            color: Colors.white,
+                                            size: 19,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Container(
+                                        width: 30,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                            color: kPrimaryColor,
+                                            borderRadius:
+                                                BorderRadius.circular(100)),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            String itemId =
+                                                snapshot.data!.docs[index].id;
+                                            late String text = '';
+                                            editDialogBox(
+                                                context, text, index, itemId);
+
+                                            setState(() {});
+                                            // await updateMessage(itemId);
+                                          },
+                                          child: const Icon(
+                                            Icons.edit_rounded,
+                                            color: Colors.white,
+                                            size: 19,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   child:
                                       MessageBubbleSend(message: chat[index]))
                               : MessageBubbleReceive(message: chat[index]);
@@ -108,27 +173,31 @@ class ChatScreen extends StatelessWidget {
                                 onSubmitted: (data) {
                                   if (data != '') {
                                     messages.add({
-                                      kMessage: data,
+                                      kMessage: data.trim(),
                                       kTime: getTime(
                                         DateTime.now().hour,
                                         DateTime.now().minute,
                                         DateTime.now().second,
                                         DateTime.now().millisecond,
+                                        DateTime.now().day,
+                                        DateTime.now().month,
+                                        DateTime.now().year,
                                       ),
                                       kCreatedAt: DateTime.now(),
                                       kId: args.userEmail,
                                       kFriendId: args.friendEmail
                                     });
+                                    _controller.animateTo(0,
+                                        duration:
+                                            const Duration(milliseconds: 500),
+                                        curve: Curves.fastOutSlowIn);
+                                    soundPlayer.play(AssetSource(
+                                        'sounds/message_sound.mp3'));
                                   }
                                   messageController.clear();
                                   userMessage = null;
-                                  _controller.animateTo(0 - 80,
-                                      duration:
-                                          const Duration(milliseconds: 500),
-                                      curve: Curves.fastOutSlowIn);
                                 },
                                 style: const TextStyle(fontSize: 18),
-                                maxLines: 1,
                                 decoration: const InputDecoration(
                                   hintText: 'Message',
                                   contentPadding: EdgeInsets.symmetric(
@@ -145,22 +214,29 @@ class ChatScreen extends StatelessWidget {
                               onTap: () {
                                 if (userMessage != null) {
                                   messages.add({
-                                    kMessage: userMessage,
+                                    kMessage: userMessage!.trim(),
                                     kTime: getTime(
-                                        DateTime.now().hour,
-                                        DateTime.now().minute,
-                                        DateTime.now().second,
-                                        DateTime.now().millisecond),
+                                      DateTime.now().hour,
+                                      DateTime.now().minute,
+                                      DateTime.now().second,
+                                      DateTime.now().millisecond,
+                                      DateTime.now().day,
+                                      DateTime.now().month,
+                                      DateTime.now().year,
+                                    ),
                                     kCreatedAt: DateTime.now(),
                                     kId: args.userEmail,
                                     kFriendId: args.friendEmail
                                   });
+                                  _controller.animateTo(0,
+                                      duration:
+                                          const Duration(milliseconds: 500),
+                                      curve: Curves.fastOutSlowIn);
+                                  soundPlayer.play(
+                                      AssetSource('sounds/message_sound.mp3'));
                                 }
                                 userMessage = null;
                                 messageController.clear();
-                                _controller.animateTo(0 - 40,
-                                    duration: const Duration(milliseconds: 500),
-                                    curve: Curves.easeIn);
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(14),
@@ -260,8 +336,15 @@ class ChatScreen extends StatelessWidget {
     return chat;
   }
 
-  String getTime(var hour, var minute, var second, var millisecond) {
-    String getHour, getMinute, getSecond, getMilliSecond;
+  String getTime(var hour, var minute, var second, var millisecond, var day,
+      var month, var year) {
+    String getHour,
+        getMinute,
+        getSecond,
+        getMilliSecond,
+        getDay,
+        getMonth,
+        getYear;
 
     hour < 10 ? getHour = '0$hour' : getHour = '$hour';
 
@@ -273,6 +356,116 @@ class ChatScreen extends StatelessWidget {
         ? getMilliSecond = '0$millisecond'
         : getMilliSecond = '$millisecond';
 
-    return '$getHour:$getMinute:$getSecond:$getMilliSecond';
+    day < 10 ? getDay = '0$day' : getDay = '$day';
+
+    month < 10 ? getMonth = '0$month' : getMonth = '$month';
+
+    getYear = '$year';
+
+    return '$getHour:$getMinute:$getSecond:$getMilliSecond:$getDay:$getMonth:$getYear';
+  }
+
+  void editDialogBox(
+      BuildContext context, String text, int index, String itemId) {
+    String messageBuffer = '';
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              'Edit Message',
+              style: TextStyle(
+                color: kPrimaryColor,
+                fontSize: 20,
+              ),
+            ),
+            content: TextFormField(
+              onChanged: (data) {
+                messageBuffer = data;
+              },
+              initialValue: chat[index].text,
+              style: const TextStyle(color: Colors.black),
+              decoration: const InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  borderSide: BorderSide(color: Colors.white),
+                  gapPadding: 20,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  borderSide: BorderSide(color: Colors.white),
+                  gapPadding: 20,
+                ),
+                contentPadding: EdgeInsets.all(20),
+                suffixIcon: Icon(Icons.edit_rounded),
+                suffixIconColor: Colors.white,
+              ),
+            ),
+            backgroundColor: Colors.white,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+            actionsPadding:
+                const EdgeInsets.only(top: 10, right: 10, bottom: 20),
+            actions: [
+              GestureDetector(
+                onTap: () async {
+                  messageBuffer == ''
+                      ? await updateMessage(itemId, chat[index].text)
+                      : await updateMessage(itemId, messageBuffer.trim());
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: kPrimaryColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    'Edit',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: kPrimaryColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
+  deleteMessage(String id) {
+    messages.doc(id).delete()
+      ..then((_) => print('Deleted'))
+          .catchError((error) => print('Delete failed: $error'));
+  }
+
+  updateMessage(String id, String text) {
+    messages.doc(id).update({kMessage: text})
+      ..then((_) => print('Edited'))
+          .catchError((error) => print('Edit failed: $error'));
   }
 }

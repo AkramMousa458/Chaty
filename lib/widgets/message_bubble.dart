@@ -25,7 +25,7 @@ class MessageBubbleSend extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
+              SelectableText(
                 textAlign: TextAlign.left,
                 message.text,
                 style: const TextStyle(
@@ -65,7 +65,7 @@ class MessageBubbleReceive extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
+              SelectableText(
                 textAlign: TextAlign.left,
                 message.text,
                 style: const TextStyle(

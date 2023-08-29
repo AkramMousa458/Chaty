@@ -9,7 +9,10 @@ class Message {
   Message(this.text, this.time, this.id, this.friendId);
 
   factory Message.fromJson(jsonData) {
-    return Message(jsonData[kMessage], jsonData[kTime], jsonData[kId],
+    return Message(
+        jsonData[kMessage],
+        jsonData[kTime].toString().substring(0, 5),
+        jsonData[kId],
         jsonData[kFriendId]);
   }
 }

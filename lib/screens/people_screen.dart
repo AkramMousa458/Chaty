@@ -4,14 +4,16 @@ import 'package:akram/constants.dart';
 import 'package:akram/models/screen_args.dart';
 import 'package:akram/models/user.dart';
 import 'package:akram/screens/chat_screen.dart';
+import 'package:akram/screens/setting_screen.dart';
 import 'package:akram/widgets/confirm_dialog_box.dart';
-import 'package:akram/widgets/setting_widget.dart';
 import 'package:akram/widgets/user_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/find_user_name.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:path/path.dart' as p;
 
 class PeopleScreen extends StatelessWidget {
   PeopleScreen({super.key});
@@ -36,38 +38,47 @@ class PeopleScreen extends StatelessWidget {
             return Scaffold(
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.endFloat,
-              floatingActionButton: GestureDetector(
-                onTap: () {
-                  confirmDialogBox(
-                      context: context,
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      },
-                      title: "Logout",
-                      body: 'Are you sure want logout?',
-                      no: 'Cancel',
-                      confirm: 'Logout');
-                  // Navigator.pop(context);
-                },
-                child: Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: kPrimaryColor,
-                  ),
-                  margin: const EdgeInsets.all(10),
-                  child: Transform.scale(
+              floatingActionButton: IconButton(
+                  onPressed: () {
+                    confirmDialogBox(
+                        context: context,
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        title: "Logout",
+                        body: 'Are you sure want logout?',
+                        no: 'Cancel',
+                        confirm: 'Logout');
+                    // Navigator.pop(context);
+                  },
+                  padding: const EdgeInsets.all(20),
+                  icon: Transform.scale(
                     scaleX: -1,
                     child: const Icon(
                       Icons.logout,
-                      color: Colors.white,
+                      color: Colors.black,
                       size: 30,
                     ),
+                  )
+                  // Container(
+                  //   height: 100,
+                  //   width: 100,
+                  //   decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.circular(100),
+                  //     color: kPrimaryColor,
+                  //   ),
+                  //   margin: const EdgeInsets.all(10),
+                  //   child: Transform.scale(
+                  //     scaleX: -1,
+                  //     child: const Icon(
+                  //       Icons.logout,
+                  //       color: Colors.black,
+                  //       size: 30,
+                  //     ),
+                  //   ),
+                  // ),
                   ),
-                ),
-              ),
               appBar: AppBar(
                 automaticallyImplyLeading: false,
                 actions: [
@@ -83,10 +94,10 @@ class PeopleScreen extends StatelessWidget {
                       onSelected: (value) {
                         switch (value) {
                           case MenuItem.search:
-                            print('Search screen');
+                            {}
                             break;
                           case MenuItem.setting:
-                            Navigator.pushNamed(context, SettingWidget.id,
+                            Navigator.pushNamed(context, SettingScreen.id,
                                 arguments: userEmail);
                             break;
                         }
@@ -211,6 +222,12 @@ class PeopleScreen extends StatelessWidget {
         });
   }
 }
+
+// void uploadImage() {
+//   FirebaseStorage storage =
+//       FirebaseStorage.instanceFor(bucket: 'gs://chaty-666cb.appspot.com/');
+//   StroageReference ref = storage.ref().child(p.basename(image.path));
+// }
 
 enum MenuItem {
   search,

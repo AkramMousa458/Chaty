@@ -1,4 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
+import 'dart:typed_data';
 
 import 'package:akram/models/register_user.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,9 @@ import '../widgets/button_widget.dart';
 import '../widgets/text_field_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+
+import 'package:akram/utils.dart';
+import 'package:image_picker/image_picker.dart';
 
 // ignore: must_be_immutable
 class RegisterScreen extends StatefulWidget {
@@ -27,6 +31,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   GlobalKey<FormState> formKey = GlobalKey();
 
+  Uint8List? _image;
+
+  void selectImage() async {
+    try {
+      Uint8List img = await pickImage(ImageSource.camera);
+      setState(() {
+        _image = img;
+      });
+    } catch (ex) {
+      showSnackBar(
+          context: context,
+          text: 'No image selected',
+          icon: Icons.image_not_supported_rounded,
+          backColor: Colors.blueGrey);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
@@ -42,17 +63,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Image.asset(
-                      kLogo,
-                      width: 120,
+                    Stack(
+                      children: [
+                        _image == null
+                            ? GestureDetector(
+                                onTap: () {
+                                  selectImage();
+                                },
+                                child: const CircleAvatar(
+                                  radius: 65,
+                                  backgroundImage:
+                                      AssetImage('assets/images/user.png'),
+                                ),
+                              )
+                            : GestureDetector(
+                                onTap: () {
+                                  selectImage();
+                                },
+                                child: CircleAvatar(
+                                  radius: 65,
+                                  backgroundImage: MemoryImage(_image!),
+                                ),
+                              ),
+                        Positioned(
+                          bottom: -5,
+                          right: -5,
+                          child: IconButton(
+                            onPressed: () async {
+                              selectImage();
+                            },
+                            icon: const Icon(Icons.add_a_photo_rounded,
+                                color: Colors.white),
+                          ),
+                        )
+                      ],
                     ),
-                    const Text(
-                      'Chaty',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    // Image.asset(
+                    //   kLogo,
+                    //   width: 120,
+                    // ),
+                    // const Text(
+                    //   'Chaty',
+                    //   style: TextStyle(
+                    //     fontSize: 32,
+                    //     fontWeight: FontWeight.w500,
+                    //   ),
+                    // ),
                     const SizedBox(
                       height: 10,
                     ),

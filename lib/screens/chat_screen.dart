@@ -6,6 +6,7 @@ import 'package:akram/widgets/confirm_dialog_box.dart';
 import 'package:flutter/material.dart';
 
 import '../models/screen_args.dart';
+import '../utils.dart';
 import '../widgets/message_bubble.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,7 +15,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 // ignore: must_be_immutable
 class ChatScreen extends StatefulWidget {
-  ChatScreen({super.key});
+  const ChatScreen({super.key});
 
   static String id = 'ChatScreen';
 
@@ -110,7 +111,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                             confirmDialogBox(
                                                 context: context,
                                                 onTap: () async {
-                                                  await deleteMessage(itemId);
+                                                  await deleteMessage(
+                                                      messages, itemId);
                                                   Navigator.pop(context);
                                                 },
                                                 title: 'Delete Message',
@@ -410,8 +412,9 @@ class _ChatScreenState extends State<ChatScreen> {
               GestureDetector(
                 onTap: () async {
                   messageBuffer == ''
-                      ? await updateMessage(itemId, chat[index].text)
-                      : await updateMessage(itemId, messageBuffer.trim());
+                      ? await updateMessage(messages, itemId, chat[index].text)
+                      : await updateMessage(
+                          messages, itemId, messageBuffer.trim());
                   Navigator.pop(context);
                 },
                 child: Container(
@@ -455,17 +458,5 @@ class _ChatScreenState extends State<ChatScreen> {
             ],
           );
         });
-  }
-
-  deleteMessage(String id) {
-    messages.doc(id).delete()
-      ..then((_) => print('Deleted'))
-          .catchError((error) => print('Delete failed: $error'));
-  }
-
-  updateMessage(String id, String text) {
-    messages.doc(id).update({kMessage: text})
-      ..then((_) => print('Edited'))
-          .catchError((error) => print('Edit failed: $error'));
   }
 }

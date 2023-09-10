@@ -15,3 +15,5 @@ String kFriendId = 'friendId';
 String kUsersCollection = 'users';
 String kEmail = 'email';
 String kName = 'name';
+String photoConst = 'photo';
+String KStatues = 'statues';

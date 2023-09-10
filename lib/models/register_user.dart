@@ -11,8 +11,10 @@ Future<void> registerUser(
     {required BuildContext context,
     required String name,
     required String email,
+    required String photoUrl,
     required String password,
-    required String confirmPassword}) async {
+    required String confirmPassword,
+    String statues = 'At work'}) async {
   CollectionReference users =
       FirebaseFirestore.instance.collection(kUsersCollection);
 
@@ -26,9 +28,10 @@ Future<void> registerUser(
         icon: Icons.check_circle,
         backColor: Colors.green);
 
-    users.add({'email': email, 'name': name});
+    users.add(
+        {'email': email, 'name': name, 'photo': photoUrl, 'statues': statues});
 
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 1), () {
       Navigator.pop(context);
     });
   } else {

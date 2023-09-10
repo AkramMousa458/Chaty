@@ -70,7 +70,16 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       Row(
                         children: [
-                          Image.asset(kLogo, height: 38),
+                          Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(args.friendPhoto),
+                                ),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(150)),
+                          ),
                           const SizedBox(width: 6),
                           Text(args.friendName)
                         ],

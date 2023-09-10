@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
-import 'dart:typed_data';
+
+import 'dart:io';
 
 import 'package:akram/models/register_user.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +12,9 @@ import '../widgets/text_field_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
-import 'package:akram/utils.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'package:firebase_storage/firebase_storage.dart';
 
 // ignore: must_be_immutable
 class RegisterScreen extends StatefulWidget {
@@ -25,20 +27,42 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  String? name, email, password, confirmPassword;
+  String? name, email, password, confirmPassword, statues;
 
   bool isLoading = false;
 
   GlobalKey<FormState> formKey = GlobalKey();
 
-  Uint8List? _image;
+  File? _image;
+  String imageUrl = '';
 
   void selectImage() async {
     try {
-      Uint8List img = await pickImage(ImageSource.camera);
+      //select image from device
+      ImagePicker imagePicker = ImagePicker();
+      XFile? file = await imagePicker.pickImage(source: ImageSource.camera);
+
+      if (file == null) return;
+
       setState(() {
-        _image = img;
+        _image = File(file.path);
       });
+
+      //upload to firebase
+      final String uniqueFileName =
+          DateTime.now().millisecondsSinceEpoch.toString();
+
+      final Reference referenceRoot = FirebaseStorage.instance.ref();
+      final referenceDirImages = referenceRoot.child('images');
+      final referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+      try {
+        await referenceImageToUpload.putFile(File(file.path));
+        imageUrl = await referenceImageToUpload.getDownloadURL();
+        print('Image uploaded!');
+      } catch (error) {
+        print('Image not uploaded');
+      }
     } catch (ex) {
       showSnackBar(
           context: context,
@@ -67,7 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       children: [
                         _image == null
                             ? GestureDetector(
-                                onTap: () {
+                                onTap: () async {
                                   selectImage();
                                 },
                                 child: const CircleAvatar(
@@ -82,7 +106,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 },
                                 child: CircleAvatar(
                                   radius: 65,
-                                  backgroundImage: MemoryImage(_image!),
+                                  backgroundImage: FileImage(_image as File),
                                 ),
                               ),
                         Positioned(
@@ -98,17 +122,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         )
                       ],
                     ),
-                    // Image.asset(
-                    //   kLogo,
-                    //   width: 120,
-                    // ),
-                    // const Text(
-                    //   'Chaty',
-                    //   style: TextStyle(
-                    //     fontSize: 32,
-                    //     fontWeight: FontWeight.w500,
-                    //   ),
-                    // ),
                     const SizedBox(
                       height: 10,
                     ),
@@ -158,6 +171,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         confirmPassword = data;
                       },
                     ),
+                    const SizedBox(height: 16),
+                    FormTextFieldWidget(
+                      hintText: 'Ex: At work',
+                      icon: Icon(Icons.text_fields_rounded),
+                      isPassword: false,
+                      onChanged: (String data) {
+                        statues = data;
+                      },
+                    ),
                     ButtonWidget(
                         text: 'Register',
                         onTap: () async {
@@ -170,9 +192,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   context: context,
                                   name: name.toString(),
                                   email: email.toString().trim(),
+                                  photoUrl: imageUrl.isEmpty
+                                      ? 'https://firebasestorage.googleapis.com/v0/b/chaty-666cb.appspot.com/o/fixedPhoto%2Fuser.png?alt=media&token=2eed3132-bfb0-455c-bccb-99fccc023d16'
+                                      : imageUrl,
                                   password: password.toString().trim(),
                                   confirmPassword:
-                                      confirmPassword.toString().trim());
+                                      confirmPassword.toString().trim(),
+                                  statues: statues.toString());
                               setState(() {
                                 isLoading = false;
                               });

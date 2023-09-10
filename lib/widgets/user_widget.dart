@@ -18,8 +18,8 @@ class UserWidget extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-                image: const DecorationImage(
-                  image: AssetImage('assets/images/user.png'),
+                image: DecorationImage(
+                  image: NetworkImage(user.photo),
                 ),
                 borderRadius: BorderRadius.circular(150)),
           ),

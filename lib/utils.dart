@@ -1,8 +1,9 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'package:akram/constants.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:akram/models/user.dart';
 
 deleteMessage(CollectionReference messages, String id) {
   messages.doc(id).delete()
@@ -16,13 +17,29 @@ updateMessage(CollectionReference messages, String id, String text) {
         .catchError((error) => print('Edit failed: $error'));
 }
 
-pickImage(ImageSource source) async {
-  ImagePicker imagePicker = ImagePicker();
-  XFile? file = await imagePicker.pickImage(source: source);
-
-  if (file != null) {
-    return await file.readAsBytes();
-  } else {
-    print('No image selected');
+String findUserName(List<User> list, String email) {
+  for (int i = 0; i < list.length; i++) {
+    if (list[i].email == email) {
+      return list[i].name;
+    }
   }
+  return 'User Name';
+}
+
+String findUserPhoto(List<User> list, String email) {
+  for (int i = 0; i < list.length; i++) {
+    if (list[i].email == email) {
+      return list[i].photo;
+    }
+  }
+  return 'User Photo';
+}
+
+String findUserStatues(List<User> list, String email) {
+  for (int i = 0; i < list.length; i++) {
+    if (list[i].email == email) {
+      return list[i].statues;
+    }
+  }
+  return 'User Statues';
 }

@@ -11,9 +11,7 @@ import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../models/find_user_name.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
-// import 'package:path/path.dart' as p;
+import '../utils.dart';
 
 class PeopleScreen extends StatelessWidget {
   PeopleScreen({super.key});
@@ -60,25 +58,7 @@ class PeopleScreen extends StatelessWidget {
                       color: Colors.black,
                       size: 30,
                     ),
-                  )
-                  // Container(
-                  //   height: 100,
-                  //   width: 100,
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(100),
-                  //     color: kPrimaryColor,
-                  //   ),
-                  //   margin: const EdgeInsets.all(10),
-                  //   child: Transform.scale(
-                  //     scaleX: -1,
-                  //     child: const Icon(
-                  //       Icons.logout,
-                  //       color: Colors.black,
-                  //       size: 30,
-                  //     ),
-                  //   ),
-                  // ),
-                  ),
+                  )),
               appBar: AppBar(
                 automaticallyImplyLeading: false,
                 actions: [
@@ -128,8 +108,9 @@ class PeopleScreen extends StatelessWidget {
                           height: 90,
                           decoration: BoxDecoration(
                               color: Colors.grey,
-                              image: const DecorationImage(
-                                image: AssetImage('assets/images/user.png'),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                    findUserPhoto(usersList, userEmail)),
                               ),
                               borderRadius: BorderRadius.circular(200)),
                         ),
@@ -148,8 +129,8 @@ class PeopleScreen extends StatelessWidget {
                                   fontSize: 30,
                                   fontWeight: FontWeight.bold),
                             ),
-                            const Text('At work',
-                                style: TextStyle(
+                            Text(findUserStatues(usersList, userEmail),
+                                style: const TextStyle(
                                   color: Colors.black,
                                   height: 1.5,
                                   fontSize: 18,
@@ -178,11 +159,23 @@ class PeopleScreen extends StatelessWidget {
                   ),
                   Expanded(
                     child: Container(
-                      decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(25),
-                              topLeft: Radius.circular(25))),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black45.withOpacity(0.2),
+                            offset: const Offset(
+                              0.0,
+                              10.0,
+                            ),
+                            blurRadius: 15.0,
+                            spreadRadius: 5.0,
+                          ),
+                        ],
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(45),
+                            topLeft: Radius.circular(45)),
+                      ),
                       child: Column(
                         children: [
                           Expanded(
@@ -197,7 +190,8 @@ class PeopleScreen extends StatelessWidget {
                                       arguments: ScreenArgs(
                                           userEmail: userEmail,
                                           friendName: usersList[index].name,
-                                          friendEmail: usersList[index].email),
+                                          friendEmail: usersList[index].email,
+                                          friendPhoto: usersList[index].photo),
                                     );
                                   },
                                   child: UserWidget(user: usersList[index]),

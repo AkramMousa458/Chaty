@@ -154,7 +154,6 @@ class _ChatScreenState extends State<ChatScreen> {
                                                 context, text, index, itemId);
 
                                             setState(() {});
-                                            // await updateMessage(itemId);
                                           },
                                           child: const Icon(
                                             Icons.edit_rounded,
@@ -357,7 +356,9 @@ class _ChatScreenState extends State<ChatScreen> {
         getMonth,
         getYear;
 
+    // hour == 0 ? getHour = '${hour + 12}' : getHour = '$hour';
     hour < 10 ? getHour = '0$hour' : getHour = '$hour';
+    // hour > 12 ? getHour = '${hour - 12}' : getHour = '$hour';
 
     minute < 10 ? getMinute = '0$minute' : getMinute = '$minute';
 

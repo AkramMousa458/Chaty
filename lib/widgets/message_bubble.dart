@@ -13,7 +13,7 @@ class MessageBubbleSend extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: Container(
           constraints: const BoxConstraints(maxWidth: 320),
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
           margin: const EdgeInsets.only(top: 12, left: 12, right: 12),
           decoration: BoxDecoration(
               color: Colors.green[800],
@@ -53,7 +53,7 @@ class MessageBubbleReceive extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Container(
           constraints: const BoxConstraints(maxWidth: 320),
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
           margin: const EdgeInsets.only(top: 12, left: 12, right: 12),
           decoration: BoxDecoration(
               color: kPrimaryColor,

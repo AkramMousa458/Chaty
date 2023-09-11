@@ -13,7 +13,7 @@ deleteMessage(CollectionReference messages, String id) {
 
 updateMessage(CollectionReference messages, String id, String text) {
   messages.doc(id).update({kMessage: text})
-    ..then((_) => print('Edited'))
+    ..then((_) => print('${messages.doc(id).toString()}Edited'))
         .catchError((error) => print('Edit failed: $error'));
 }
 

@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, use_build_context_synchronously
 
 import 'package:akram/constants.dart';
 import 'package:akram/models/message.dart';
@@ -356,9 +356,7 @@ class _ChatScreenState extends State<ChatScreen> {
         getMonth,
         getYear;
 
-    // hour == 0 ? getHour = '${hour + 12}' : getHour = '$hour';
     hour < 10 ? getHour = '0$hour' : getHour = '$hour';
-    // hour > 12 ? getHour = '${hour - 12}' : getHour = '$hour';
 
     minute < 10 ? getMinute = '0$minute' : getMinute = '$minute';
 

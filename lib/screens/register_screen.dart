@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, use_build_context_synchronously, avoid_print
 
 import 'dart:io';
 
@@ -174,7 +174,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 16),
                     FormTextFieldWidget(
                       hintText: 'Ex: At work',
-                      icon: Icon(Icons.text_fields_rounded),
+                      icon: const Icon(Icons.text_fields_rounded),
                       isPassword: false,
                       onChanged: (String data) {
                         statues = data;

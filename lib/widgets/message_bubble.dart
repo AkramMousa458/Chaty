@@ -1,6 +1,7 @@
 import 'package:akram/constants.dart';
 import 'package:akram/models/message.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/link.dart';
 
 class MessageBubbleSend extends StatelessWidget {
   const MessageBubbleSend({super.key, required this.message});
@@ -25,13 +26,31 @@ class MessageBubbleSend extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              SelectableText(
-                textAlign: TextAlign.left,
-                message.text,
-                style: const TextStyle(
-                  fontSize: 15,
-                ),
-              ),
+              message.text.trim().startsWith('http') ||
+                      message.text.trim().startsWith('www')
+                  ? Link(
+                      uri: Uri.parse(message.text),
+                      // ignore: non_constant_identifier_names, avoid_types_as_parameter_names
+                      builder: (context, FollowLink) {
+                        return GestureDetector(
+                          onTap: FollowLink,
+                          child: SelectableText(
+                            textAlign: TextAlign.left,
+                            message.text,
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 115, 185, 241),
+                              fontSize: 15,
+                            ),
+                          ),
+                        );
+                      })
+                  : SelectableText(
+                      textAlign: TextAlign.left,
+                      message.text,
+                      style: const TextStyle(
+                        fontSize: 15,
+                      ),
+                    ),
               Text(
                 message.time,
                 style: const TextStyle(fontSize: 9, color: Colors.grey),

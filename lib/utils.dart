@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, avoid_print, avoid_single_cascade_in_expression_statements
 
 import 'package:akram/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

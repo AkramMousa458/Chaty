@@ -16,4 +16,5 @@ String kUsersCollection = 'users';
 String kEmail = 'email';
 String kName = 'name';
 String photoConst = 'photo';
-String KStatues = 'statues';
+String kStatues = 'statues';
+String kLinkFlag = 'linkFlag';

@@ -10,6 +10,6 @@ class User {
 
   factory User.fromJson(jsonData) {
     return User(jsonData[kEmail], jsonData[kName], jsonData[photoConst],
-        jsonData[KStatues]);
+        jsonData[kStatues]);
   }
 }

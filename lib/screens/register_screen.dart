@@ -2,10 +2,9 @@
 
 import 'dart:io';
 
+import 'package:akram/cubits/chat_cubit/chat_cubit.dart';
 import 'package:akram/cubits/register_cubit/register_cubit.dart';
 import 'package:akram/cubits/select_image_cubit/select_image_cubit.dart';
-import 'package:akram/screens/home_screen.dart';
-import 'package:akram/screens/login_screen.dart';
 import 'package:akram/screens/people_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,10 +14,6 @@ import '../helper/show_snack_bar.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/text_field_widget.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-
-import 'package:image_picker/image_picker.dart';
-
-import 'package:firebase_storage/firebase_storage.dart';
 
 class RegisterScreen extends StatelessWidget {
   static String id = 'RegisterScreen';
@@ -80,6 +75,8 @@ class RegisterScreen extends StatelessWidget {
             backColor: Colors.green,
           );
           Future.delayed(const Duration(seconds: 1), () {
+            // BlocProvider.of<ChatCubit>(context)
+            //     .getMessages(context: context, userEmail: email!);
             Navigator.pushNamed(context, PeopleScreen.id, arguments: email);
           });
           isLoading = false;

@@ -6,9 +6,9 @@ sealed class ChatState {}
 final class ChatInitialState extends ChatState {}
 
 final class ChatSucsessState extends ChatState {
-  // ChatSucsessState({required this.messagesList, required this.chat});
-  // final List<Message> messagesList;
-  // final List<Message> chat;
+  ChatSucsessState({required this.messages, required this.chat});
+  final List<Message> messages;
+  final List<Message> chat;
 }
 
 final class ChatFailureState extends ChatState {

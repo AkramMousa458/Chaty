@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'package:akram/constants.dart';
+import 'package:akram/cubits/chat_cubit/chat_cubit.dart';
 import 'package:akram/helper/shared_preferences.dart';
 import 'package:akram/models/screen_args.dart';
 import 'package:akram/models/user.dart';
@@ -11,6 +12,7 @@ import 'package:akram/widgets/user_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../utils.dart';
 
@@ -189,6 +191,12 @@ class PeopleScreen extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 return GestureDetector(
                                   onTap: () {
+                                    BlocProvider.of<ChatCubit>(context)
+                                        .getMessages(
+                                            context: context,
+                                            userEmail: userEmail,
+                                            friendEmail:
+                                                usersList[index].email);
                                     Navigator.pushNamed(
                                       context,
                                       ChatScreen.id,

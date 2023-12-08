@@ -10,46 +10,29 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 part 'chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
-  CollectionReference messages =
-      FirebaseFirestore.instance.collection(kMessagesCollection);
+  ChatCubit() : super(ChatInitialState());
 
   List<Message> messagesList = [];
-  // List<Message> chat = [];
+  List<Message> chatList = [];
 
-  ChatCubit() : super(ChatInitialState());
+  CollectionReference messages =
+      FirebaseFirestore.instance.collection(kMessagesCollection);
 
   void getMessages(
       {required BuildContext context,
       required String userEmail,
       required String friendEmail}) {
     messages.orderBy(kCreatedAt, descending: true).snapshots().listen((event) {
-      try {
-        for (var doc in event.docs) {
-          messagesList.add(
-            Message.fromJson(doc),
-          );
-        }
-        emit(ChatSucsessState());
-        
-      } on Exception {
-        emit(ChatFailureState(
-            errMessage: 'Error while deleting message, try again'));
+      messagesList = [];
+      chatList = [];
+      for (var doc in event.docs) {
+        messagesList.add(
+          Message.fromJson(doc),
+        );
       }
-
-      // chat = getChat(messagesList, userEmail, friendEmail, context);
+      chatList = getChat(messagesList, userEmail, friendEmail, context);
+      emit(ChatSucsessState(messages: messagesList, chat: chatList));
     });
-  }
-
-  List<Message> getChat(List<Message> list, String sender, String receiver,
-      BuildContext context) {
-    List<Message> userChat = [];
-    for (int i = 0; i < list.length; i++) {
-      if ((list[i].id == sender && list[i].friendId == receiver) ||
-          list[i].friendId == sender && list[i].id == receiver) {
-        userChat.add(list[i]);
-      }
-    }
-    return userChat;
   }
 
   void sendMessage(
@@ -74,6 +57,18 @@ class ChatCubit extends Cubit<ChatState> {
         kFriendId: friendEmail
       });
     }
+  }
+
+  List<Message> getChat(List<Message> list, String sender, String receiver,
+      BuildContext context) {
+    List<Message> userChat = [];
+    for (int i = 0; i < list.length; i++) {
+      if ((list[i].id == sender && list[i].friendId == receiver) ||
+          list[i].friendId == sender && list[i].id == receiver) {
+        userChat.add(list[i]);
+      }
+    }
+    return userChat;
   }
 
   void delMessage({required String itemId}) {

@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'package:akram/constants.dart';
+import 'package:akram/helper/shared_preferences.dart';
 import 'package:akram/models/screen_args.dart';
 import 'package:akram/models/user.dart';
 import 'package:akram/screens/chat_screen.dart';
@@ -20,6 +21,8 @@ class PeopleScreen extends StatelessWidget {
 
   final CollectionReference users =
       FirebaseFirestore.instance.collection(kUsersCollection);
+
+  final CacheData cacheData = CacheData();
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +44,8 @@ class PeopleScreen extends StatelessWidget {
                     confirmDialogBox(
                         context: context,
                         onTap: () {
+                          // cacheData.removeEmail();
+                          // cacheData.removePassword();
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },

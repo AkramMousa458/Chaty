@@ -1,5 +1,5 @@
 import 'package:akram/constants.dart';
-import 'package:akram/models/message.dart';
+import 'package:akram/models/message_model.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/link.dart';
 

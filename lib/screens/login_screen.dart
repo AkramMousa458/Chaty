@@ -32,8 +32,6 @@ class LoginScreen extends StatelessWidget {
         if (state is LoginLoadingState) {
           isLoading = true;
         } else if (state is LoginSucsessState) {
-          // BlocProvider.of<ChatCubit>(context)
-          //     .getMessages(context: context, userEmail: email!);
           Navigator.pushNamed(context, PeopleScreen.id, arguments: email);
           isLoading = false;
         } else if (state is LoginFailureState) {

@@ -3,7 +3,7 @@ import 'package:akram/utils.dart';
 import 'package:bloc/bloc.dart';
 
 import 'package:akram/constants.dart';
-import 'package:akram/models/message.dart';
+import 'package:akram/models/message_model.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,6 +22,7 @@ class ChatCubit extends Cubit<ChatState> {
       {required BuildContext context,
       required String userEmail,
       required String friendEmail}) {
+    // snapshot.data!.docs[index].id
     messages.orderBy(kCreatedAt, descending: true).snapshots().listen((event) {
       messagesList = [];
       chatList = [];
@@ -52,7 +53,7 @@ class ChatCubit extends Cubit<ChatState> {
           DateTime.now().month,
           DateTime.now().year,
         ),
-        kCreatedAt: DateTime.now(),
+        kCreatedAt: DateTime.now().toUtc(),
         kId: userEmail,
         kFriendId: friendEmail
       });
@@ -71,10 +72,23 @@ class ChatCubit extends Cubit<ChatState> {
     return userChat;
   }
 
-  void delMessage({required String itemId}) {
+  // String getMessageID({required Message message}) async {
+  //   String id = await getDocumentId(messages: messages, message: message);
+  //   return id;
+  // }
+
+  void delMessage({required Message message}) async {
+    String itemId = await getDocumentId(messages: messages, message: message);
     try {
       deleteMessage(messages, itemId);
-    } on Exception {
+      // messages.doc(itemId).delete().then((value) {
+      //   print('Deleted: $itemId Value:');
+      //   emit(ChatDeleteMessageSucssesState());
+      // });
+
+      // await deleteMessage(messages, itemId);
+    } catch (error) {
+      print('Delete failed: $error');
       emit(ChatDeleteMessageFailureState(
           errMessage: 'Error while deleting message, try again'));
     }

@@ -2,10 +2,12 @@
 
 import 'package:akram/constants.dart';
 import 'package:akram/cubits/chat_cubit/chat_cubit.dart';
-import 'package:akram/models/message.dart';
-import 'package:flutter/foundation.dart';
+import 'package:akram/helper/show_snack_bar.dart';
+import 'package:akram/models/message_model.dart';
+import 'package:akram/widgets/confirm_dialog_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../models/screen_args.dart';
 import '../widgets/message_bubble.dart';
@@ -71,14 +73,24 @@ class ChatScreen extends StatelessWidget {
         body: Column(
           children: [
             Expanded(
-              child: BlocBuilder<ChatCubit, ChatState>(
-                // listener: (context, state) {
-                //   if (state is ChatSucsessState) {
-                //     chat = state.messages;
-                //     // chat = BlocProvider.of<ChatCubit>(context).messagesList;
-                //     print('Succsess get chat');
-                //   }
-                // },
+              child: BlocConsumer<ChatCubit, ChatState>(
+                listener: (context, state) {
+                  if (state is ChatDeleteMessageSucssesState) {
+                    Navigator.pop(context);
+                    showSnackBar(
+                        context: context,
+                        text: 'Message Deleted',
+                        icon: Icons.error,
+                        backColor: Colors.red);
+                  }
+                  if (state is ChatDeleteMessageFailureState) {
+                    showSnackBar(
+                        context: context,
+                        text: state.errMessage,
+                        icon: Icons.error,
+                        backColor: Colors.red);
+                  }
+                },
                 builder: (context, state) {
                   chat = BlocProvider.of<ChatCubit>(context).messagesList;
                   thisChat = BlocProvider.of<ChatCubit>(context).chatList;
@@ -88,8 +100,84 @@ class ChatScreen extends StatelessWidget {
                     controller: _controller,
                     itemCount: thisChat.length,
                     itemBuilder: (context, index) {
-                      return chat[index].id == args!.userEmail && chat[index].friendId == args!.friendEmail
-                          ? MessageBubbleSend(message: thisChat[index])
+                      return thisChat[index].id == args!.userEmail &&
+                              thisChat[index].friendId == args!.friendEmail
+                          ? Slidable(
+                              key: UniqueKey(),
+                              endActionPane: ActionPane(
+                                motion: const ScrollMotion(),
+                                children: [
+                                  Container(
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        confirmDialogBox(
+                                            context: context,
+                                            onTap: () {
+                                              BlocProvider.of<ChatCubit>(
+                                                      context)
+                                                  .delMessage(
+                                                      message: thisChat[index]);
+                                            },
+                                            title: 'Delete Message',
+                                            body:
+                                                'Do you want delete the message',
+                                            no: 'Cancel',
+                                            confirm: 'Delete');
+                                      },
+                                      child: const Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
+                                        size: 19,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // Container(
+                                  //   width: 30,
+                                  //   height: 30,
+                                  //   decoration: BoxDecoration(
+                                  //       color: kPrimaryColor,
+                                  //       borderRadius:
+                                  //           BorderRadius.circular(100)),
+                                  //   child: GestureDetector(
+                                  //     onTap: () {
+                                  //       late String text = '';
+                                  //       editDialogBox(
+                                  //           context: context,
+                                  //           initialMessage:
+                                  //               thisChat[index].text,
+                                  //           text: text,
+                                  //           index: index,
+                                  //           itemId: thisChat[index].id,
+                                  //           onTap: () {
+                                  //             BlocProvider.of<ChatCubit>(
+                                  //                     context)
+                                  //                 .editMessage(
+                                  //                     context: context,
+                                  //                     text: text,
+                                  //                     index: index,
+                                  //                     itemId:
+                                  //                         thisChat[index].id,
+                                  //                     chat: thisChat);
+                                  //           });
+                                  //     },
+                                  //     child: const Icon(
+                                  //       Icons.edit_rounded,
+                                  //       color: Colors.white,
+                                  //       size: 19,
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                ],
+                              ),
+                              child:
+                                  MessageBubbleSend(message: thisChat[index]))
                           : MessageBubbleReceive(message: thisChat[index]);
                       //  args!.friendEmail == chat[index].id
                       //     ? MessageBubbleReceive(message: chat[index])

@@ -16,9 +16,18 @@ final class ChatFailureState extends ChatState {
   final String errMessage;
 }
 
+final class ChatDeleteMessageSucssesState extends ChatState {
+  ChatDeleteMessageSucssesState();
+}
+
 final class ChatDeleteMessageFailureState extends ChatState {
   ChatDeleteMessageFailureState({required this.errMessage});
   final String errMessage;
 }
 
 final class ChatEditMessageSucssesState extends ChatState {}
+
+final class ChatEditMessageFailureState extends ChatState {
+  ChatEditMessageFailureState({required this.errMessage});
+  final String errMessage;
+}

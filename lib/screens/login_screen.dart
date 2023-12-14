@@ -1,4 +1,3 @@
-import 'package:akram/cubits/chat_cubit/chat_cubit.dart';
 import 'package:akram/cubits/login_cubit/login_cubit.dart';
 import 'package:akram/helper/shared_preferences.dart';
 import 'package:akram/helper/show_snack_bar.dart';
@@ -13,17 +12,39 @@ import '../widgets/text_field_widget.dart';
 // ignore: depend_on_referenced_packages
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
 
   static String id = 'LoginScreen';
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   String? email, password;
 
   bool isLoading = false;
+
   CacheData cacheData = CacheData();
 
   GlobalKey<FormState> formKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    checkUser();
+  }
+
+  void checkUser() async {
+    email = await cacheData.getEmail();
+    password = await cacheData.getPassword();
+    if (email != null && password != null) {
+      // ignore: use_build_context_synchronously
+      BlocProvider.of<LoginCubit>(context)
+          .loginUser(context: context, email: email!, password: password!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

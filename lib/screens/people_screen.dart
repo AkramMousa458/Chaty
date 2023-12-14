@@ -41,31 +41,51 @@ class PeopleScreen extends StatelessWidget {
             return Scaffold(
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.endFloat,
-              floatingActionButton: IconButton(
-                  onPressed: () {
-                    confirmDialogBox(
-                        context: context,
-                        onTap: () {
-                          // cacheData.removeEmail();
-                          // cacheData.removePassword();
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        },
-                        title: "Logout",
-                        body: 'Are you sure want logout?',
-                        no: 'Cancel',
-                        confirm: 'Logout');
-                    // Navigator.pop(context);
-                  },
-                  padding: const EdgeInsets.all(20),
-                  icon: Transform.scale(
-                    scaleX: -1,
-                    child: const Icon(
-                      Icons.logout,
-                      color: Colors.black,
-                      size: 30,
+              floatingActionButton: Container(
+                padding: const EdgeInsets.all(6),
+                margin: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black45.withOpacity(0.2),
+                      // offset: const Offset(
+                      //   0.0,
+                      //   10.0,
+                      // ),
+                      blurRadius: 15.0,
+                      spreadRadius: 1.0,
                     ),
-                  )),
+                  ],
+                  color: kPrimaryColor,
+                  borderRadius: BorderRadius.circular(100)
+                ),
+                child: IconButton(
+                    onPressed: () {
+                      confirmDialogBox(
+                          context: context,
+                          onTap: () {
+                            cacheData.removeEmail();
+                            cacheData.removePassword();
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          title: "Logout",
+                          body: 'Are you sure want logout?',
+                          no: 'Cancel',
+                          confirm: 'Logout');
+                      // Navigator.pop(context);
+                    },
+                    // padding: const EdgeInsets.all(20),
+                    icon: Transform.scale(
+                      scaleX: -1,
+                      child: const Icon(
+                        Icons.logout,
+                        color: Colors.white,
+                        // color: Colors.black,
+                        size: 30,
+                      ),
+                    )),
+              ),
               appBar: AppBar(
                 automaticallyImplyLeading: false,
                 actions: [
@@ -157,31 +177,32 @@ class PeopleScreen extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'Chat',
+                      'Chats',
                       style: TextStyle(
                           color: Colors.black,
-                          fontSize: 45,
+                          fontSize: 25,
                           fontWeight: FontWeight.bold),
                     ),
                   ),
                   Expanded(
                     child: Container(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black45.withOpacity(0.2),
-                            offset: const Offset(
-                              0.0,
-                              10.0,
-                            ),
-                            blurRadius: 15.0,
-                            spreadRadius: 5.0,
-                          ),
-                        ],
+                      decoration: const BoxDecoration(
+                        // boxShadow: [
+                        //   BoxShadow(
+                        //     color: Colors.black45.withOpacity(0.2),
+                        //     offset: const Offset(
+                        //       0.0,
+                        //       10.0,
+                        //     ),
+                        //     blurRadius: 15.0,
+                        //     spreadRadius: 5.0,
+                        //   ),
+                        // ],
                         color: Colors.white,
-                        borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(45),
-                            topLeft: Radius.circular(45)),
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          topLeft: Radius.circular(20),
+                        ),
                       ),
                       child: Column(
                         children: [
@@ -189,8 +210,8 @@ class PeopleScreen extends StatelessWidget {
                             child: ListView.builder(
                               itemCount: usersList.length,
                               itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {
+                                return MaterialButton(
+                                  onPressed: () {
                                     BlocProvider.of<ChatCubit>(context)
                                         .getMessages(
                                             context: context,

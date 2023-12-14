@@ -77,11 +77,11 @@ class ChatScreen extends StatelessWidget {
                 listener: (context, state) {
                   if (state is ChatDeleteMessageSucssesState) {
                     Navigator.pop(context);
-                    showSnackBar(
-                        context: context,
-                        text: 'Message Deleted',
-                        icon: Icons.error,
-                        backColor: Colors.red);
+                    // showSnackBar(
+                    //     context: context,
+                    //     text: 'Message Deleted',
+                    //     icon: Icons.error,
+                    //     backColor: Colors.red);
                   }
                   if (state is ChatDeleteMessageFailureState) {
                     showSnackBar(
@@ -122,7 +122,8 @@ class ChatScreen extends StatelessWidget {
                                               BlocProvider.of<ChatCubit>(
                                                       context)
                                                   .delMessage(
-                                                      message: thisChat[index]);
+                                                message: thisChat[index],
+                                              );
                                             },
                                             title: 'Delete Message',
                                             body:

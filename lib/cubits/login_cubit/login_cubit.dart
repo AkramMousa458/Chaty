@@ -1,5 +1,5 @@
+import 'package:akram/helper/shared_preferences.dart';
 import 'package:bloc/bloc.dart';
-import 'package:akram/screens/people_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 part 'login_state.dart';
@@ -8,6 +8,8 @@ part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(LoginInitialState());
+
+  CacheData cacheData = CacheData();
 
   Future<void> loginUser({
     required BuildContext context,
@@ -18,6 +20,8 @@ class LoginCubit extends Cubit<LoginState> {
     try {
       var auth = FirebaseAuth.instance;
       await auth.signInWithEmailAndPassword(email: email, password: password);
+      cacheData.setEmail(email: email);
+      cacheData.setPassword(password: password);
       // Navigator.pushNamed(context, PeopleScreen.id, arguments: email);
       emit(LoginSucsessState());
     } on FirebaseAuthException catch (ex) {

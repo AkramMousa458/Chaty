@@ -13,7 +13,7 @@ dynamic showSnackBar(
         Text(
           text,
           style: TextStyle(
-            fontSize: textSize ?? 20,
+            fontSize: textSize ?? 15,
           ),
         ),
         Icon(

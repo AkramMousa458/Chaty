@@ -1,44 +1,34 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CacheData {
-  SharedPreferences? sharedPreferences;
-  
-
-  // Future<bool> isLogedin(
-  //     {required String email, required String password}) async {
-  //   sharedPreferences = await SharedPreferences.getInstance();
-  //   await sharedPreferences!.setString('email', email);
-  //   await sharedPreferences!.setString('password', password);
-  //   return true;
-  // }
-
+  SharedPreferences? prefs;
 
   void setEmail({required String email}) async{
-    sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences!.setString('email', email);
+    prefs = await SharedPreferences.getInstance();
+    await prefs!.setString('email', email);
   }
 
   void setPassword({required String password}) async{
-    sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences!.setString('password', password);
+    prefs = await SharedPreferences.getInstance();
+    await prefs!.setString('password', password);
   }
 
   void removeEmail() async{
-    sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences!.remove('email');
+    prefs = await SharedPreferences.getInstance();
+    await prefs!.remove('email');
   }
   void removePassword() async{
-    sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences!.remove('password');
+    prefs = await SharedPreferences.getInstance();
+    await prefs!.remove('password');
   }
 
   Future<String?> getEmail() async{
-    sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences?.getString('email');
+    prefs = await SharedPreferences.getInstance();
+    return prefs?.getString('email');
   }
 
   Future<String?> getPassword() async{
-    sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences?.getString('password');
+    prefs = await SharedPreferences.getInstance();
+    return prefs?.getString('password');
   }
 }

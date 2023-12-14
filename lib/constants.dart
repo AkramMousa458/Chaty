@@ -9,6 +9,7 @@ String kMessagesCollection = 'messages';
 String kMessage = 'message';
 String kTime = 'time';
 String kCreatedAt = 'createdAt';
+String kOrderTime = 'orderTime';
 String kId = 'id';
 String kFriendId = 'friendId';
 

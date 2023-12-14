@@ -12,5 +12,4 @@ final class LoginLoadingState extends LoginState {}
 final class LoginFailureState extends LoginState {
   LoginFailureState({required this.errMessage});
   final String errMessage;
-
 }

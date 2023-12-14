@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:akram/cubits/chat_cubit/chat_cubit.dart';
 import 'package:akram/cubits/register_cubit/register_cubit.dart';
 import 'package:akram/cubits/select_image_cubit/select_image_cubit.dart';
 import 'package:akram/screens/people_screen.dart';

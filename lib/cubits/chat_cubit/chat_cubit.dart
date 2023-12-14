@@ -1,4 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
+import 'package:akram/helper/show_snack_bar.dart';
 import 'package:akram/utils.dart';
 import 'package:bloc/bloc.dart';
 
@@ -23,7 +24,7 @@ class ChatCubit extends Cubit<ChatState> {
       required String userEmail,
       required String friendEmail}) {
     // snapshot.data!.docs[index].id
-    messages.orderBy(kCreatedAt, descending: true).snapshots().listen((event) {
+    messages.orderBy(kOrderTime, descending: true).snapshots().listen((event) {
       messagesList = [];
       chatList = [];
       for (var doc in event.docs) {
@@ -44,7 +45,7 @@ class ChatCubit extends Cubit<ChatState> {
     if (userMessage != '') {
       messages.add({
         kMessage: userMessage.trim(),
-        kTime: getTime(
+        kCreatedAt: getTime(
           DateTime.now().hour,
           DateTime.now().minute,
           DateTime.now().second,
@@ -53,7 +54,16 @@ class ChatCubit extends Cubit<ChatState> {
           DateTime.now().month,
           DateTime.now().year,
         ),
-        kCreatedAt: DateTime.now().toUtc(),
+        kTime: getTime(
+          DateTime.now().hour,
+          DateTime.now().minute,
+          DateTime.now().second,
+          DateTime.now().millisecond,
+          DateTime.now().day,
+          DateTime.now().month,
+          DateTime.now().year,
+        ).toString().substring(0, 5),
+        kOrderTime: DateTime.now().toUtc(),
         kId: userEmail,
         kFriendId: friendEmail
       });
@@ -72,21 +82,12 @@ class ChatCubit extends Cubit<ChatState> {
     return userChat;
   }
 
-  // String getMessageID({required Message message}) async {
-  //   String id = await getDocumentId(messages: messages, message: message);
-  //   return id;
-  // }
-
-  void delMessage({required Message message}) async {
-    String itemId = await getDocumentId(messages: messages, message: message);
+  void delMessage(
+      {required Message message}) async {
+    String? itemId = await getDocumentId(localMessage: message);
     try {
-      deleteMessage(messages, itemId);
-      // messages.doc(itemId).delete().then((value) {
-      //   print('Deleted: $itemId Value:');
-      //   emit(ChatDeleteMessageSucssesState());
-      // });
-
-      // await deleteMessage(messages, itemId);
+      deleteMessage(messages, itemId!);
+      emit(ChatDeleteMessageSucssesState());
     } catch (error) {
       print('Delete failed: $error');
       emit(ChatDeleteMessageFailureState(

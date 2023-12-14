@@ -1,30 +1,34 @@
 // ignore_for_file: depend_on_referenced_packages, avoid_print, avoid_single_cascade_in_expression_statements
 
-import 'dart:js_util';
-
 import 'package:akram/constants.dart';
 import 'package:akram/models/message_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:akram/models/user.dart';
 
-Future<String> getDocumentId({required CollectionReference messages, required Message message}) async {
-    String documentId = '';
-    try {
-      QuerySnapshot querySnapshot = await messages.get();
+Future<String?> getDocumentId({required Message localMessage}) async {
+  try {
+    CollectionReference collectionRef =
+        FirebaseFirestore.instance.collection(kMessagesCollection);
 
-      if (querySnapshot.docs.isNotEmpty) {
-        for (QueryDocumentSnapshot document in querySnapshot.docs) {
-          if (equal(message , document)) documentId = document.id;
-        }
-      } else {
-        print('No documents found');
-      }
-    } catch (e) {
-      print('Error getting documents: $e');
+    QuerySnapshot querySnapshot = await collectionRef
+        .where(kMessage, isEqualTo: localMessage.text)
+        .where(kTime, isEqualTo: localMessage.time)
+        .where(kId, isEqualTo: localMessage.id)
+        .where(kFriendId, isEqualTo: localMessage.friendId)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id;
+    } else {
+      return 'Document not found'; // Document not found
     }
-    return documentId;
+  } catch (e) {
+    // Handle errors here
+    print('Error getting document ID: $e');
+    return 'Error getting document ID: $e';
   }
+}
 
 deleteMessage(CollectionReference messages, String id) async {
   messages.doc(id).delete()

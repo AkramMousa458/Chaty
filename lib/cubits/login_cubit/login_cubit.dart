@@ -21,9 +21,8 @@ class LoginCubit extends Cubit<LoginState> {
       var auth = FirebaseAuth.instance;
       await auth.signInWithEmailAndPassword(email: email, password: password);
       cacheData.setEmail(email: email);
-      cacheData.setPassword(password: password);
-      // Navigator.pushNamed(context, PeopleScreen.id, arguments: email);
-      emit(LoginSucsessState());
+      // cacheData.setPassword(password: password);
+      emit(LoginSucsessState(email: email));
     } on FirebaseAuthException catch (ex) {
       if (ex.code == 'user-not-found') {
         emit(LoginFailureState(errMessage: 'User not found'));

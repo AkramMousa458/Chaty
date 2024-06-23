@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void checkUser() async {
     email = await cacheData.getEmail();
-    password = await cacheData.getPassword();
+    // password = await cacheData.getPassword();
     if (email != null && password != null) {
       // ignore: use_build_context_synchronously
       BlocProvider.of<LoginCubit>(context)
@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (state is LoginLoadingState) {
           isLoading = true;
         } else if (state is LoginSucsessState) {
-          Navigator.pushNamed(context, PeopleScreen.id, arguments: email);
+          Navigator.pushReplacementNamed(context, PeopleScreen.id, arguments: email);
           isLoading = false;
         } else if (state is LoginFailureState) {
           showSnackBar(

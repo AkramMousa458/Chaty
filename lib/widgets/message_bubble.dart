@@ -26,7 +26,7 @@ class MessageBubbleSend extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              message.text.trim().startsWith('http') ||
+              message.text.trim().startsWith('http') || 
                       message.text.trim().startsWith('www')
                   ? Link(
                       uri: Uri.parse(message.text),

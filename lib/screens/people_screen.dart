@@ -65,7 +65,7 @@ class PeopleScreen extends StatelessWidget {
                           context: context,
                           onTap: () {
                             cacheData.removeEmail();
-                            cacheData.removePassword();
+                            // cacheData.removePassword();
                             Navigator.pop(context);
                             Navigator.pop(context);
                           },
